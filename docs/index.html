@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App — Static Preview</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --primary: #2563eb;
+        --primary-weak: #e0e7ff;
+        --border: #e2e8f0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 18px 24px;
+        position: sticky;
+        top: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        margin: 0 0 8px 0;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      nav a {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--primary-weak);
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .wrapper {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      }
+      .muted {
+        color: var(--muted);
+        margin: 0 0 12px;
+      }
+      .pill {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      ul {
+        margin: 8px 0 0 16px;
+        color: var(--muted);
+      }
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrapper" style="padding: 0; max-width: 960px">
+        <h1>Which accounts feel strategic… but actually aren’t?</h1>
+        <p class="muted" style="margin: 0 0 6px">
+          CARI is a private reality check for institutional salespeople.
+        </p>
+        <nav>
+          <a href="#landing">Landing</a>
+          <a href="#login">Login</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="#accounts">Accounts</a>
+          <a href="#scoring">Score</a>
+          <a href="#results">Results</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrapper">
+      <section id="landing" class="card">
+        <p class="pill">/app/</p>
+        <h2>Landing</h2>
+        <p class="muted">
+          Which accounts feel strategic… but actually aren’t? CARI shows you
+          which relationships are real — and which ones quietly never pay you
+          back.
+        </p>
+        <ul>
+          <li>No CRM. No coaching. No visibility.</li>
+          <li>Just clarity, for yourself.</li>
+        </ul>
+      </section>
+
+      <section id="login" class="card">
+        <p class="pill">/app/login</p>
+        <h2>Login</h2>
+        <p class="muted">Magic link. No password.</p>
+        <div class="section-grid">
+          <div class="card">
+            <h3 style="margin: 0 0 6px">What to show</h3>
+            <ul>
+              <li>Email input</li>
+              <li>"Log in with email" button</li>
+              <li>Success + error states</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="margin: 0 0 6px">Tips</h3>
+            <ul>
+              <li>Keep copy short; confirm email sent.</li>
+              <li>Link to privacy / terms if needed.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="card">
+        <p class="pill">/app/app/</p>
+        <h2>Dashboard</h2>
+        <p class="muted">Overview of accounts with quick actions.</p>
+        <ul>
+          <li>List accounts + primary actions.</li>
+          <li>CTA to create a new account.</li>
+          <li>Link to latest score snapshot.</li>
+        </ul>
+      </section>
+
+      <section id="accounts" class="card">
+        <p class="pill">/app/app/accounts/123/</p>
+        <h2>Account detail</h2>
+        <p class="muted">Snapshot view of one account.</p>
+        <ul>
+          <li>Summary, owners, products.</li>
+          <li>Links to score + latest result.</li>
+          <li>Recent activity or notes.</li>
+        </ul>
+      </section>
+
+      <section id="scoring" class="card">
+        <p class="pill">/app/app/accounts/123/score/</p>
+        <h2>Score account</h2>
+        <p class="muted">Placeholder for quick inputs and effort slider.</p>
+        <ul>
+          <li>Render question sections (yes/no, 3-pt, 5-pt).</li>
+          <li>Effort % slider (0–30%).</li>
+          <li>Save draft locally; submit to compute.</li>
+        </ul>
+      </section>
+
+      <section id="results" class="card">
+        <p class="pill">/app/app/accounts/123/result/</p>
+        <h2>Results</h2>
+        <p class="muted">Show RRS, bucket, illusion flags, and time warning.</p>
+        <ul>
+          <li>Export PDF button.</li>
+          <li>Latest snapshot metadata (version, timestamp).</li>
+          <li>Section score summaries.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
