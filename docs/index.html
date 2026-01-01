@@ -98,11 +98,11 @@
         </p>
         <nav>
           <a href="#landing">Landing</a>
-          <a href="login.html">Login</a>
-          <a href="#who">Who</a>
-          <a href="#what">What</a>
-          <a href="#privacy">Privacy</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#login">Login</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="#accounts">Accounts</a>
+          <a href="#scoring">Score</a>
+          <a href="#results">Results</a>
         </nav>
       </div>
     </header>
@@ -122,49 +122,71 @@
         </ul>
       </section>
 
-      <section id="who" class="card">
-        <p class="pill">Who this is for</p>
-        <h2>Who This Is For</h2>
-        <p class="muted">
-          Institutional sales • Coverage • Relationship managers. Fixed income,
-          rates, credit, structured, prime. If you don&apos;t say coverage, this
-          isn&apos;t for you.
-        </p>
+      <section id="login" class="card">
+        <p class="pill">/app/login</p>
+        <h2>Login</h2>
+        <p class="muted">Magic link. No password.</p>
+        <div class="section-grid">
+          <div class="card">
+            <h3 style="margin: 0 0 6px">What to show</h3>
+            <ul>
+              <li>Email input</li>
+              <li>"Log in with email" button</li>
+              <li>Success + error states</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="margin: 0 0 6px">Tips</h3>
+            <ul>
+              <li>Keep copy short; confirm email sent.</li>
+              <li>Link to privacy / terms if needed.</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
-      <section id="what" class="card">
-        <p class="pill">What it does</p>
-        <h2>What It Does</h2>
-        <p class="muted">
-          You score accounts across access, economics, trust, and influence.
-          CARI reflects the reality back — privately. You decide what to do
-          next.
-        </p>
+      <section id="dashboard" class="card">
+        <p class="pill">/app/app/</p>
+        <h2>Dashboard</h2>
+        <p class="muted">Overview of accounts with quick actions.</p>
+        <ul>
+          <li>List accounts + primary actions.</li>
+          <li>CTA to create a new account.</li>
+          <li>Link to latest score snapshot.</li>
+        </ul>
       </section>
 
-      <section id="privacy" class="card">
-        <p class="pill">Privacy</p>
-        <h2>Privacy</h2>
-        <p class="muted">
-          Personal. Standalone. Not shared. Not reported. Designed for judgment —
-          not management.
-        </p>
+      <section id="accounts" class="card">
+        <p class="pill">/app/app/accounts/123/</p>
+        <h2>Account detail</h2>
+        <p class="muted">Snapshot view of one account.</p>
+        <ul>
+          <li>Summary, owners, products.</li>
+          <li>Links to score + latest result.</li>
+          <li>Recent activity or notes.</li>
+        </ul>
       </section>
 
-      <section id="pricing" class="card">
-        <p class="pill">Pricing</p>
-        <h2>Pricing</h2>
-        <p class="muted">$149 / year — Personal license.</p>
-        <p class="muted">
-          You already know which accounts might not be real. CARI just makes it
-          undeniable.
-        </p>
-        <a
-          href="login.html"
-          class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700"
-        >
-          Log in with email →
-        </a>
+      <section id="scoring" class="card">
+        <p class="pill">/app/app/accounts/123/score/</p>
+        <h2>Score account</h2>
+        <p class="muted">Placeholder for quick inputs and effort slider.</p>
+        <ul>
+          <li>Render question sections (yes/no, 3-pt, 5-pt).</li>
+          <li>Effort % slider (0–30%).</li>
+          <li>Save draft locally; submit to compute.</li>
+        </ul>
+      </section>
+
+      <section id="results" class="card">
+        <p class="pill">/app/app/accounts/123/result/</p>
+        <h2>Results</h2>
+        <p class="muted">Show RRS, bucket, illusion flags, and time warning.</p>
+        <ul>
+          <li>Export PDF button.</li>
+          <li>Latest snapshot metadata (version, timestamp).</li>
+          <li>Section score summaries.</li>
+        </ul>
       </section>
     </main>
   </body>
