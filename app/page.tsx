@@ -1,31 +1,36 @@
 export default function HomePage() {
   return (
     <div className="space-y-10">
-      <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
-          CARI
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900">
-          Which accounts feel strategic… but actually aren’t?
-        </h1>
-        <p className="text-lg text-slate-800">
-          CARI is a private reality check for institutional salespeople.
-          <br />
-          It shows you which relationships are real — and which ones quietly
-          never pay you back.
-        </p>
-        <div className="space-y-3 text-slate-700">
-          <p>No CRM. No coaching. No visibility.</p>
-          <p>Just clarity, for yourself.</p>
+      <section className="relative overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 p-10 shadow-xl backdrop-blur">
+        <div className="pointer-events-none absolute inset-0 opacity-70">
+          <div className="absolute left-6 top-6 h-32 w-32 rounded-full bg-gradient-to-br from-sky-200 via-indigo-100 to-transparent blur-3xl" />
+          <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-gradient-to-br from-fuchsia-100 via-purple-50 to-transparent blur-3xl" />
         </div>
-        <div className="space-y-2">
-          <a
-            href="/app/login"
-            className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 text-base font-semibold text-white shadow hover:bg-blue-700 sm:w-auto"
-          >
-            Log in with email →
-          </a>
-          <p className="text-sm text-slate-500">Magic link. No password.</p>
+        <div className="relative space-y-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
+            CARI
+          </p>
+          <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl">
+            Which accounts feel strategic… but actually aren’t?
+          </h1>
+          <p className="text-lg text-slate-800 sm:text-xl">
+            CARI is a private reality check for institutional salespeople. It
+            shows you which relationships are real — and which ones quietly
+            never pay you back.
+          </p>
+          <div className="space-y-2 text-slate-700">
+            <p className="text-base sm:text-lg">No CRM. No coaching. No visibility.</p>
+            <p className="text-base sm:text-lg">Just clarity, for yourself.</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href="/app/login"
+              className="inline-flex animate-float items-center justify-center rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-blue-500/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/25"
+            >
+              Log in with email →
+            </a>
+            <p className="text-sm text-slate-500">Magic link. No password.</p>
+          </div>
         </div>
       </section>
 
@@ -51,29 +56,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-6 rounded-lg border border-slate-200 bg-white p-8 shadow-sm md:grid-cols-3">
-        <div className="space-y-3">
+      <section className="grid gap-6 md:grid-cols-3">
+        <div className="glow-border rounded-xl border border-slate-200/70 bg-white/80 p-6 shadow-lg backdrop-blur">
           <h3 className="text-xl font-semibold text-slate-900">Privacy</h3>
-          <p className="text-slate-700">
-            Personal. Standalone. Not shared. Not reported.
-            <br />
-            Designed for judgment — not management.
+          <p className="mt-2 text-slate-700">
+            Personal. Standalone. Not shared. Not reported. Designed for judgment — not
+            management.
           </p>
         </div>
-        <div className="space-y-3">
+        <div className="glow-border rounded-xl border border-slate-200/70 bg-white/80 p-6 shadow-lg backdrop-blur">
           <h3 className="text-xl font-semibold text-slate-900">Pricing</h3>
-          <p className="text-slate-700">
-            $149 / year
-            <br />
+          <p className="mt-2 text-slate-700">
+            $149 / year <br />
             Personal license
           </p>
         </div>
-        <div className="space-y-3">
+        <div className="glow-border rounded-xl border border-slate-200/70 bg-white/80 p-6 shadow-lg backdrop-blur">
           <h3 className="text-xl font-semibold text-slate-900">Why Now</h3>
-          <p className="text-slate-700">
-            You already know which accounts might not be real.
-            <br />
-            CARI just makes it undeniable.
+          <p className="mt-2 text-slate-700">
+            You already know which accounts might not be real. CARI just makes it
+            undeniable.
           </p>
         </div>
       </section>
