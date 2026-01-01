@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "grades": [2, 3],
+  "creatures": [
+    { "id": "shellfin", "name": "Shellfin", "starter": true },
+    { "id": "octomurk", "name": "Octomurk", "starter": true },
+    { "id": "spikewave", "name": "Spikewave", "starter": true }
+  ],
+  "enemies": [
+    { "id": "crabsnap", "name": "Crabsnap" },
+    { "id": "lockjaw", "name": "Lockjaw" }
+  ],
+  "skills": [
+    {
+      "id": "math.addition",
+      "subject": "math",
+      "name": "Addition",
+      "gradeRules": {
+        "2": { "difficultyRanges": { "1": [0, 10], "2": [0, 20], "3": [0, 50], "4": [0, 100], "5": [0, 200] } },
+        "3": { "difficultyRanges": { "1": [0, 20], "2": [0, 50], "3": [0, 100], "4": [0, 200], "5": [0, 500] } }
+      }
+    },
+    {
+      "id": "math.subtraction",
+      "subject": "math",
+      "name": "Subtraction",
+      "gradeRules": {
+        "2": { "difficultyRanges": { "1": [0, 10], "2": [0, 20], "3": [0, 50], "4": [0, 100], "5": [0, 200] } },
+        "3": { "difficultyRanges": { "1": [0, 20], "2": [0, 50], "3": [0, 100], "4": [0, 200], "5": [0, 500] } }
+      }
+    }
+  ],
+  "battleConfig": {
+    "playerHP": 100,
+    "enemyHP": 100,
+    "damageOnCorrect": 20,
+    "damageOnIncorrect": 15,
+    "fastBonusDamage": 5,
+    "fastThresholdMs": 4000
+  }
+}
