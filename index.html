@@ -15,25 +15,16 @@
         <div class="brand">
           <img src="./images/brand/logo.png" alt="Math Monsters logo" class="brand-mark" />
           <div>
-            <p class="eyebrow">Math Monsters</p>
-            <h1>Battle practice, now in one page</h1>
-            <p class="lede">Deterministic battles, adaptive difficulty, saved locally.</p>
+            <h1>Math Monsters</h1>
+            <p class="lede">Flip homework battles into monster battles</p>
           </div>
         </div>
         <div class="masthead-actions">
           <span class="pill">Local save only</span>
           <button type="button" class="ghost" data-open-settings>Settings</button>
-          <button type="button" data-start-battle>Jump to battle</button>
+          <button type="button" data-start-battle>Register</button>
         </div>
       </header>
-
-      <section class="notice" data-migration-note hidden>
-        <div>
-          <strong>We moved everything into one experience.</strong>
-          <p>Legacy auth/leveling saves were pulled from this device and kept locally.</p>
-        </div>
-        <button type="button" class="ghost" data-dismiss-migration>Dismiss</button>
-      </section>
 
       <section class="screen" id="setup-screen" hidden>
         <div class="grid-two">
@@ -140,14 +131,6 @@
             </div>
           </article>
         </div>
-
-        <article class="card hint" data-home-hint hidden>
-          <div>
-            <strong>Tip</strong>
-            <p>Answer correctly to attack. Answer quickly for bonus damage.</p>
-          </div>
-          <button class="ghost" type="button" data-dismiss-hint>Got it</button>
-        </article>
       </section>
 
       <section class="screen" id="settings-screen" hidden>
@@ -240,10 +223,6 @@
         </div>
       </section>
     </main>
-
-    <footer class="footer">
-      <p class="muted">Math Monsters saves to localStorage only. Legacy auth/leveling URLs now redirect here.</p>
-    </footer>
 
     <script type="module" src="./js/ui/app.js"></script>
   </body>
