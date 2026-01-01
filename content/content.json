@@ -1,41 +1,50 @@
 {
-  "version": 1,
-  "grades": [2, 3],
+  "version": 2,
+  "grades": [1, 2, 3, 4],
   "creatures": [
     { "id": "shellfin", "name": "Shellfin", "starter": true },
     { "id": "octomurk", "name": "Octomurk", "starter": true },
-    { "id": "spikewave", "name": "Spikewave", "starter": true }
+    { "id": "spikewave", "name": "Spikewave", "starter": true },
+    { "id": "whirlpool", "name": "Whirlpool Wisp", "starter": false }
   ],
   "enemies": [
     { "id": "crabsnap", "name": "Crabsnap" },
-    { "id": "lockjaw", "name": "Lockjaw" }
+    { "id": "lockjaw", "name": "Lockjaw" },
+    { "id": "tidemauler", "name": "Tidemauler" }
   ],
   "skills": [
     {
       "id": "math.addition",
       "subject": "math",
       "name": "Addition",
+      "description": "Quick sums and regrouping checks that ramp from single digits into multi-digit practice.",
       "gradeRules": {
-        "2": { "difficultyRanges": { "1": [0, 10], "2": [0, 20], "3": [0, 50], "4": [0, 100], "5": [0, 200] } },
-        "3": { "difficultyRanges": { "1": [0, 20], "2": [0, 50], "3": [0, 100], "4": [0, 200], "5": [0, 500] } }
+        "1": { "difficultyRanges": { "1": [0, 10], "2": [0, 20], "3": [5, 30], "4": [10, 40], "5": [20, 60] } },
+        "2": { "difficultyRanges": { "1": [0, 20], "2": [0, 40], "3": [10, 60], "4": [20, 120], "5": [30, 180] } },
+        "3": { "difficultyRanges": { "1": [0, 40], "2": [10, 80], "3": [20, 160], "4": [40, 240], "5": [80, 360] } },
+        "4": { "difficultyRanges": { "1": [20, 120], "2": [60, 200], "3": [120, 300], "4": [180, 420], "5": [240, 600] } }
       }
     },
     {
       "id": "math.subtraction",
       "subject": "math",
       "name": "Subtraction",
+      "description": "Borrowing practice with safe, non-negative results and pacing checks for confidence.",
       "gradeRules": {
-        "2": { "difficultyRanges": { "1": [0, 10], "2": [0, 20], "3": [0, 50], "4": [0, 100], "5": [0, 200] } },
-        "3": { "difficultyRanges": { "1": [0, 20], "2": [0, 50], "3": [0, 100], "4": [0, 200], "5": [0, 500] } }
+        "1": { "difficultyRanges": { "1": [0, 10], "2": [0, 15], "3": [5, 25], "4": [10, 35], "5": [20, 55] } },
+        "2": { "difficultyRanges": { "1": [0, 15], "2": [0, 30], "3": [10, 50], "4": [20, 80], "5": [30, 120] } },
+        "3": { "difficultyRanges": { "1": [0, 30], "2": [5, 70], "3": [20, 120], "4": [40, 200], "5": [60, 320] } },
+        "4": { "difficultyRanges": { "1": [10, 70], "2": [20, 140], "3": [60, 220], "4": [120, 320], "5": [200, 500] } }
       }
     }
   ],
   "battleConfig": {
-    "playerHP": 100,
-    "enemyHP": 100,
-    "damageOnCorrect": 20,
-    "damageOnIncorrect": 15,
-    "fastBonusDamage": 5,
-    "fastThresholdMs": 4000
+    "playerHP": 120,
+    "enemyHP": 120,
+    "damageOnCorrect": 18,
+    "damageOnIncorrect": 12,
+    "fastBonusDamage": 6,
+    "fastThresholdMs": 3500,
+    "questionsPerBattle": 8
   }
 }

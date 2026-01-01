@@ -1,6 +1,7 @@
 import type { Content, SaveData, SkillState } from '../types.js';
 
-const STORAGE_KEY = 'mathMonstersSave_v1';
+const STORAGE_KEY = 'mathMonstersSave_v2';
+const PREVIOUS_STORAGE_KEY = 'mathMonstersSave_v1';
 const LEGACY_KEYS = [
   'mathmonstersProgress',
   'mathmonstersPlayerProfile',
@@ -29,6 +30,9 @@ const buildSkillState = (skills: Content['skills']): Record<string, SkillState> 
       difficulty: 1,
       correctStreak: 0,
       incorrectStreak: 0,
+      totalCorrect: 0,
+      totalAnswered: 0,
+      averageResponseMs: 0,
     };
     return acc;
   }, {});
@@ -59,6 +63,9 @@ const sanitizeSkillState = (
         difficulty: Math.min(5, Math.max(1, Math.floor(existing.difficulty))),
         correctStreak: Math.max(0, Math.floor(existing.correctStreak)),
         incorrectStreak: Math.max(0, Math.floor(existing.incorrectStreak)),
+        totalCorrect: Math.max(0, Math.floor(existing.totalCorrect ?? 0)),
+        totalAnswered: Math.max(0, Math.floor(existing.totalAnswered ?? 0)),
+        averageResponseMs: Math.max(0, Math.floor(existing.averageResponseMs ?? 0)),
       };
       continue;
     }
@@ -67,6 +74,9 @@ const sanitizeSkillState = (
       difficulty: 1,
       correctStreak: 0,
       incorrectStreak: 0,
+      totalCorrect: 0,
+      totalAnswered: 0,
+      averageResponseMs: 0,
     };
   }
 
@@ -92,7 +102,7 @@ export const createInitialSave = (
   );
 
   return {
-    version: 1,
+    version: 2,
     createdAt: new Date().toISOString(),
     parentEmail: parentEmail?.trim() ?? '',
     child: {
@@ -101,12 +111,59 @@ export const createInitialSave = (
     },
     progress: {
       xp: 0,
+      battlesPlayed: 0,
       skillState: buildSkillState(content.skills),
       lastPlayedSkillId: content.skills[0]?.id ?? 'math.addition',
+      lastBattleSeed: '',
     },
     flags: {
       seenHomeHint: false,
       practiceMode: false,
+      migratedFromLegacy: false,
+    },
+  };
+};
+
+type LegacySaveV1 = Omit<SaveData, 'version' | 'progress' | 'flags'> & {
+  version: 1;
+  progress: {
+    xp: number;
+    skillState: Record<string, SkillState>;
+    lastPlayedSkillId: string;
+  };
+  flags: {
+    seenHomeHint: boolean;
+    practiceMode?: boolean;
+  };
+};
+
+const upgradeV1Save = (parsed: LegacySaveV1, content: Content): SaveData => {
+  const lastSkill = content.skills.find(
+    (skill) => skill.id === parsed.progress?.lastPlayedSkillId
+  )?.id;
+
+  const normalizedSkillState = sanitizeSkillState(parsed.progress?.skillState || {}, content);
+
+  return {
+    version: 2,
+    createdAt: parsed.createdAt || new Date().toISOString(),
+    parentEmail: parsed.parentEmail?.trim() || '',
+    child: {
+      grade: sanitizeGrade(Number(parsed.child?.grade), content),
+      selectedCreatureId:
+        parsed.child?.selectedCreatureId || content.creatures[0]?.id || 'shellfin',
+    },
+    progress: {
+      xp: Math.max(0, Math.floor(Number(parsed.progress?.xp) || 0)),
+      battlesPlayed: 0,
+      skillState: normalizedSkillState,
+      lastPlayedSkillId: lastSkill || content.skills[0]?.id || 'math.addition',
+      lastBattleSeed: '',
+    },
+    flags: {
+      seenHomeHint: Boolean(parsed.flags?.seenHomeHint),
+      practiceMode: Boolean(parsed.flags?.practiceMode),
+      migratedFromLegacy: Boolean(parsed.flags?.migratedFromLegacy),
     },
   };
 };
@@ -118,12 +175,16 @@ const normalizeSave = (raw: unknown, content: Content): SaveData | null => {
 
   try {
     const parsed = raw as Partial<SaveData>;
-    if (parsed.version !== 1) {
+
+    if (parsed.version === 1) {
+      return upgradeV1Save(parsed as LegacySaveV1, content);
+    }
+
+    if (parsed.version !== 2) {
       return null;
     }
 
     const grade = sanitizeGrade(Number(parsed.child?.grade), content);
-
     const selectedCreature = content.creatures.find(
       (creature) => creature.id === parsed.child?.selectedCreatureId
     )?.id;
@@ -133,7 +194,7 @@ const normalizeSave = (raw: unknown, content: Content): SaveData | null => {
     )?.id;
 
     return {
-      version: 1,
+      version: 2,
       createdAt: parsed.createdAt || new Date().toISOString(),
       parentEmail: parsed.parentEmail?.trim() || '',
       child: {
@@ -142,12 +203,15 @@ const normalizeSave = (raw: unknown, content: Content): SaveData | null => {
       },
       progress: {
         xp: Math.max(0, Math.floor(Number(parsed.progress?.xp) || 0)),
+        battlesPlayed: Math.max(0, Math.floor(Number(parsed.progress?.battlesPlayed) || 0)),
         skillState: sanitizeSkillState(parsed.progress?.skillState || {}, content),
         lastPlayedSkillId: lastSkill || content.skills[0]?.id || 'math.addition',
+        lastBattleSeed: parsed.progress?.lastBattleSeed || '',
       },
       flags: {
         seenHomeHint: Boolean(parsed.flags?.seenHomeHint),
         practiceMode: Boolean(parsed.flags?.practiceMode),
+        migratedFromLegacy: Boolean(parsed.flags?.migratedFromLegacy),
       },
     };
   } catch (error) {
@@ -177,6 +241,7 @@ export const resetSave = () => {
 
   try {
     storage.removeItem(STORAGE_KEY);
+    storage.removeItem(PREVIOUS_STORAGE_KEY);
     for (const key of LEGACY_KEYS) {
       storage.removeItem(key);
     }
@@ -244,6 +309,7 @@ export const migrateLegacyData = (content: Content): SaveData | null => {
     selectedCreatureId: content.creatures.find((creature) => creature.starter)?.id,
   });
   save.progress.xp = xp;
+  save.flags.migratedFromLegacy = true;
 
   persistSave(save);
 
@@ -272,6 +338,16 @@ export const loadSave = (content: Content): SaveData | null => {
   try {
     const raw = storage.getItem(STORAGE_KEY);
     if (!raw) {
+      const legacyRaw = storage.getItem(PREVIOUS_STORAGE_KEY);
+      if (legacyRaw) {
+        const parsed = JSON.parse(legacyRaw);
+        const upgraded = normalizeSave(parsed, content);
+        if (upgraded) {
+          persistSave(upgraded);
+          storage.removeItem(PREVIOUS_STORAGE_KEY);
+        }
+        return upgraded;
+      }
       return null;
     }
 
