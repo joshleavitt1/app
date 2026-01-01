@@ -1,54 +1,33 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/login", label: "Login" },
-  { href: "/app", label: "App Dashboard" },
-  { href: "/app/accounts/new", label: "New Account" },
-  { href: "/app/accounts/123", label: "Account (123)" },
-  { href: "/app/accounts/123/score", label: "Score (123)" },
-  { href: "/app/accounts/123/result", label: "Result (123)" }
-];
-
 export const metadata: Metadata = {
-  title: "App Router Scaffold",
-  description: "Next.js 14 App Router scaffold with Tailwind CSS"
+  title: "Math Monsters MVP",
+  description: "Single-player math battles for grades 2-3"
 };
 
 export default function RootLayout({
   children
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="page-shell text-slate-900">
-        <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur">
-          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Navigation
-              </p>
-              <p className="text-lg font-bold text-slate-900">
-                CARI App Router Scaffold
-              </p>
+      <body className="bg-slate-50 text-slate-900">
+        <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-emerald-50">
+          <header className="border-b border-indigo-100/80 bg-white/80 backdrop-blur">
+            <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-500">
+                  Math Monsters
+                </p>
+                <p className="text-sm text-slate-600">Answer to attack. Built for fun, not funnels.</p>
+              </div>
+              <div className="rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                MVP: Single-player battle loop
+              </div>
             </div>
-            <nav className="flex flex-wrap gap-3 text-sm font-medium text-blue-700">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-100 hover:shadow-sm"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+          </header>
+          <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+        </div>
       </body>
     </html>
   );
