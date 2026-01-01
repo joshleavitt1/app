@@ -17,6 +17,7 @@ export interface Skill {
   id: string;
   subject: string;
   name: string;
+  description: string;
   gradeRules: Record<string, DifficultyRules>;
 }
 
@@ -27,6 +28,7 @@ export interface BattleConfig {
   damageOnIncorrect: number;
   fastBonusDamage: number;
   fastThresholdMs: number;
+  questionsPerBattle: number;
 }
 
 export interface Content {
@@ -42,6 +44,9 @@ export interface SkillState {
   difficulty: number;
   correctStreak: number;
   incorrectStreak: number;
+  totalCorrect: number;
+  totalAnswered: number;
+  averageResponseMs: number;
 }
 
 export interface SaveData {
@@ -54,18 +59,24 @@ export interface SaveData {
   };
   progress: {
     xp: number;
+    battlesPlayed: number;
     skillState: Record<string, SkillState>;
     lastPlayedSkillId: string;
+    lastBattleSeed: string;
   };
   flags: {
     seenHomeHint: boolean;
     practiceMode?: boolean;
+    migratedFromLegacy?: boolean;
   };
 }
 
 export interface Question {
   prompt: string;
   answer: number;
+  operands: number[];
+  skillId?: string;
+  difficulty?: number;
 }
 
 export interface BattleSession {
@@ -75,8 +86,11 @@ export interface BattleSession {
   playerHP: number;
   enemyHP: number;
   questionIndex: number;
+  questionLimit: number;
   currentQuestion: Question;
   questionStartedAt: number;
+  seed: string;
+  rngCursor: number;
 }
 
 export interface AnswerResult {

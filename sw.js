@@ -1,8 +1,12 @@
-const CACHE_VERSION = 'mvp-v1';
+const CACHE_VERSION = 'mvp-v2';
 const CACHE_NAME = `mathmonsters-${CACHE_VERSION}`;
 const OFFLINE_ASSETS = [
   './',
   './index.html',
+  './auth.html',
+  './leveling.html',
+  './auth/index.html',
+  './leveling/index.html',
   './manifest.webmanifest',
   './css/app.css',
   './js/ui/app.js',

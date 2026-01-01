@@ -3,45 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b1c3a" />
+    <meta name="theme-color" content="#050f23" />
     <title>Math Monsters</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" sizes="300x300" href="./images/brand/logo.png" />
     <link rel="stylesheet" href="./css/app.css" />
   </head>
   <body>
-    <main id="app">
-      <header class="app-header">
-        <h1 class="app-title">Math Monsters MVP</h1>
-        <p>Fast battle loop. Local save only.</p>
+    <main id="app" class="page">
+      <header class="masthead">
+        <div class="brand">
+          <img src="./images/brand/logo.png" alt="Math Monsters logo" class="brand-mark" />
+          <div>
+            <p class="eyebrow">Math Monsters</p>
+            <h1>Battle practice, now in one page</h1>
+            <p class="lede">Deterministic battles, adaptive difficulty, saved locally.</p>
+          </div>
+        </div>
+        <div class="masthead-actions">
+          <span class="pill">Local save only</span>
+          <button type="button" class="ghost" data-open-settings>Settings</button>
+          <button type="button" data-start-battle>Jump to battle</button>
+        </div>
       </header>
 
+      <section class="notice" data-migration-note hidden>
+        <div>
+          <strong>We moved everything into one experience.</strong>
+          <p>Legacy auth/leveling saves were pulled from this device and kept locally.</p>
+        </div>
+        <button type="button" class="ghost" data-dismiss-migration>Dismiss</button>
+      </section>
+
       <section class="screen" id="setup-screen" hidden>
-        <h2>Parent Setup</h2>
-        <p>Save is stored locally. No accounts or logins.</p>
-        <form id="setup-form">
-          <label>
-            <span>Parent email (optional)</span>
-            <input type="email" name="parentEmail" data-setup-email placeholder="you@example.com" />
-          </label>
-          <label>
-            <span>Child grade</span>
-            <select name="grade" data-setup-grade></select>
-          </label>
-          <div class="card">
-            <h3>Pick a starter</h3>
-            <div class="grid-two" data-setup-creatures></div>
-          </div>
-          <div class="actions-row">
-            <button type="submit">Continue</button>
-          </div>
-        </form>
+        <div class="grid-two">
+          <article class="card">
+            <div class="card-header">
+              <p class="eyebrow">Step 1</p>
+              <h2>Parent setup</h2>
+              <p class="muted">Progress is stored in your browser. No accounts or cloud sync.</p>
+            </div>
+            <form id="setup-form" class="stack">
+              <label>
+                <span>Parent email (optional)</span>
+                <input type="email" name="parentEmail" data-setup-email placeholder="you@example.com" />
+              </label>
+              <label>
+                <span>Child grade</span>
+                <select name="grade" data-setup-grade></select>
+              </label>
+              <div class="card inset">
+                <div class="card-header">
+                  <p class="eyebrow">Starter</p>
+                  <h3>Pick a creature</h3>
+                </div>
+                <div class="grid-two" data-setup-creatures></div>
+              </div>
+              <div class="actions-row">
+                <button type="submit">Continue</button>
+              </div>
+            </form>
+          </article>
+          <article class="card highlight">
+            <h3>What changed?</h3>
+            <ul class="bullet-list">
+              <li>Legacy auth + leveling screens now redirect here automatically.</li>
+              <li>Battles use deterministic seeds so the same round stays consistent.</li>
+              <li>Difficulty adjusts based on streaks and how fast answers arrive.</li>
+              <li>Everything saves to localStorage only.</li>
+            </ul>
+          </article>
+        </div>
       </section>
 
       <section class="screen" id="home-screen" hidden>
         <div class="grid-two">
-          <div class="card">
-            <div class="hero-display">
+          <article class="card hero-card">
+            <div class="hero">
               <div class="hero-avatar">
                 <img
                   src="./images/hero/shellfin_evolution_1.png"
@@ -49,38 +87,77 @@
                   data-hero-image
                 />
               </div>
-              <div class="stat">
-                <strong data-creature-name>Creature</strong>
-                <span data-creature-level>Level 1</span>
-                <span data-grade-display>Grade 2</span>
-                <span data-xp-display>0 XP</span>
-                <span data-practice-label>Practice Mode: Off</span>
+              <div>
+                <p class="eyebrow" data-creature-name>Creature</p>
+                <h2 data-hero-title>Ready for battle</h2>
+                <div class="pill-row">
+                  <span class="pill" data-grade-display>Grade 1</span>
+                  <span class="pill pill-muted" data-practice-pill>Practice off</span>
+                </div>
               </div>
             </div>
-            <div class="hint" data-home-hint hidden>
-              <strong>Tip:</strong> Answer correctly to attack!<br />
-              <button class="secondary" type="button" data-dismiss-hint>Got it</button>
+            <dl class="stat-list">
+              <div>
+                <dt>Level</dt>
+                <dd data-creature-level>Level 1</dd>
+              </div>
+              <div>
+                <dt>XP</dt>
+                <dd data-xp-display>0 XP</dd>
+              </div>
+              <div>
+                <dt>Battles</dt>
+                <dd data-battle-count>0 played</dd>
+              </div>
+              <div>
+                <dt>Avg. response</dt>
+                <dd data-average-time>—</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="card battle-card">
+            <div class="card-header">
+              <p class="eyebrow">Step 2</p>
+              <h3>Battle setup</h3>
+              <p class="muted">Pick a skill and we’ll generate a deterministic round.</p>
             </div>
-          </div>
-          <div class="card">
-            <h3>Battle Setup</h3>
             <label>
               <span>Skill</span>
               <select data-skill-select></select>
             </label>
-            <div class="actions-row">
-              <button type="button" data-start-battle>Start Battle</button>
-              <button type="button" class="secondary" data-open-settings>Settings</button>
+            <p class="muted" data-skill-description>Choose a skill to see details.</p>
+            <div class="meter" data-difficulty-meter style="--value:0.2">
+              <div class="meter-fill"></div>
+              <div class="meter-label">
+                <span>Difficulty</span>
+                <strong data-difficulty-label>1 of 5</strong>
+              </div>
             </div>
-          </div>
+            <div class="actions-row">
+              <button type="button" data-start-battle>Start battle</button>
+              <button type="button" class="ghost" data-open-settings>Settings</button>
+            </div>
+          </article>
         </div>
+
+        <article class="card hint" data-home-hint hidden>
+          <div>
+            <strong>Tip</strong>
+            <p>Answer correctly to attack. Answer quickly for bonus damage.</p>
+          </div>
+          <button class="ghost" type="button" data-dismiss-hint>Got it</button>
+        </article>
       </section>
 
       <section class="screen" id="settings-screen" hidden>
         <div class="grid-two">
-          <div class="card">
-            <h2>Settings</h2>
-            <form id="settings-form">
+          <article class="card">
+            <div class="card-header">
+              <p class="eyebrow">Step 3</p>
+              <h2>Settings</h2>
+            </div>
+            <form id="settings-form" class="stack">
               <label>
                 <span>Grade</span>
                 <select data-settings-grade></select>
@@ -91,44 +168,61 @@
               </label>
               <label class="creature-choice">
                 <input type="checkbox" data-settings-practice />
-                <span>Practice Mode (no effect on damage, tracks difficulty)</span>
+                <span>Practice mode (tracks difficulty, no account needed)</span>
               </label>
-              <div class="card">
-                <h3>Choose creature</h3>
+              <div class="card inset">
+                <div class="card-header">
+                  <p class="eyebrow">Hero</p>
+                  <h3>Choose creature</h3>
+                </div>
                 <div class="grid-two" data-settings-creatures></div>
               </div>
               <div class="actions-row">
                 <button type="submit">Save</button>
-                <button type="button" class="secondary" data-back-home>Back Home</button>
+                <button type="button" class="ghost" data-back-home>Back home</button>
               </div>
             </form>
-          </div>
-          <div class="card">
-            <h3>Danger zone</h3>
-            <p>Reset wipes local progress and returns to setup.</p>
-            <button type="button" class="danger" data-reset-save>Reset Save</button>
-          </div>
+          </article>
+          <article class="card danger-card">
+            <h3>Reset this device</h3>
+            <p>Clears legacy keys and the current save, then returns to setup.</p>
+            <button type="button" class="danger" data-reset-save>Reset save</button>
+          </article>
         </div>
       </section>
 
       <section class="screen" id="battle-screen" hidden>
         <div class="battle-layout">
-          <div class="card">
-            <h2>Battle</h2>
-            <p data-battle-meta>Loading battle…</p>
-            <div class="hp-bar">
-              <strong>Player HP</strong>
-              <div class="hp-visual" data-player-hp style="--value:1">100 / 100</div>
+          <article class="card">
+            <div class="card-header">
+              <p class="eyebrow">Step 4</p>
+              <h2>Battle</h2>
+              <p class="muted" data-battle-meta>Loading battle…</p>
             </div>
             <div class="hp-bar">
-              <strong>Enemy HP</strong>
-              <div class="hp-visual" data-enemy-hp style="--value:1">100 / 100</div>
+              <div class="hp-row">
+                <strong>Player HP</strong>
+                <span data-player-hp>100 / 100</span>
+              </div>
+              <div class="hp-visual" data-player-hp-bar style="--value:1"></div>
             </div>
-          </div>
-          <div class="card">
-            <h3>Question <span data-question-index></span></h3>
+            <div class="hp-bar">
+              <div class="hp-row">
+                <strong>Enemy HP</strong>
+                <span data-enemy-hp>100 / 100</span>
+              </div>
+              <div class="hp-visual enemy" data-enemy-hp-bar style="--value:1"></div>
+            </div>
+            <p class="muted small">Question <span data-question-index></span> of <span data-question-total></span></p>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Question</h3>
+              <p class="muted">Fast answers add bonus damage.</p>
+            </div>
             <div class="question-box" data-question>Loading question…</div>
-            <form id="answer-form">
+            <form id="answer-form" class="stack">
               <label>
                 <span>Your answer</span>
                 <input type="number" inputmode="numeric" data-answer-input required />
@@ -139,13 +233,17 @@
             </form>
             <p class="feedback" data-feedback></p>
             <div class="actions-row" data-battle-end-actions hidden>
-              <button type="button" data-play-again>Play Again</button>
-              <button type="button" class="secondary" data-back-home>Back Home</button>
+              <button type="button" data-play-again>Play again</button>
+              <button type="button" class="ghost" data-back-home>Back home</button>
             </div>
-          </div>
+          </article>
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <p class="muted">Math Monsters saves to localStorage only. Legacy auth/leveling URLs now redirect here.</p>
+    </footer>
 
     <script type="module" src="./js/ui/app.js"></script>
   </body>

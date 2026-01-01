@@ -11,6 +11,12 @@ let content = null;
 let saveData = null;
 let activeBattle = null;
 const getElement = (selector) => document.querySelector(selector);
+const formatMs = (ms) => {
+    if (!Number.isFinite(ms) || ms <= 0) {
+        return '—';
+    }
+    return `${(ms / 1000).toFixed(1)}s`;
+};
 const setScreen = (screen) => {
     Object.keys(screens).forEach((name) => {
         const element = screens[name];
@@ -57,21 +63,52 @@ const fetchContent = async () => {
     }
     return response.json();
 };
+const getSkillState = (skillId) => { var _a; return ((_a = saveData === null || saveData === void 0 ? void 0 : saveData.progress.skillState) === null || _a === void 0 ? void 0 : _a[skillId]) ?? null; };
+const updateSkillDetails = () => {
+    if (!content || !saveData)
+        return;
+    const skillSelect = getElement('[data-skill-select]');
+    const selectedSkillId = (skillSelect === null || skillSelect === void 0 ? void 0 : skillSelect.value) || saveData.progress.lastPlayedSkillId;
+    const skill = content.skills.find((item) => item.id === selectedSkillId);
+    const skillDescription = getElement('[data-skill-description]');
+    const meter = getElement('[data-difficulty-meter]');
+    const meterLabel = getElement('[data-difficulty-label]');
+    const state = selectedSkillId ? getSkillState(selectedSkillId) : null;
+    const difficultyValue = (state === null || state === void 0 ? void 0 : state.difficulty) ?? 1;
+    const value = difficultyValue / 5;
+    if (skillDescription) {
+        skillDescription.textContent = (skill === null || skill === void 0 ? void 0 : skill.description) ?? 'Choose a skill to see details.';
+    }
+    if (meter) {
+        meter.style.setProperty('--value', value.toString());
+    }
+    if (meterLabel) {
+        meterLabel.textContent = `${difficultyValue} of 5`;
+    }
+};
 const updateHomeView = () => {
+    var _a;
     const currentSave = saveData;
     const currentContent = content;
     if (!currentSave || !currentContent)
         return;
-    const creatureName = currentContent.creatures.find((creature) => creature.id === currentSave.child.selectedCreatureId)?.name;
+    const creatureName = (_a = currentContent.creatures.find((creature) => creature.id === currentSave.child.selectedCreatureId)) === null || _a === void 0 ? void 0 : _a.name;
     const creatureLabel = getElement('[data-creature-name]');
     const levelLabel = getElement('[data-creature-level]');
     const gradeLabel = getElement('[data-grade-display]');
     const xpLabel = getElement('[data-xp-display]');
-    const practiceLabel = getElement('[data-practice-label]');
-    const skillSelect = getElement('[data-skill-select]');
     const heroImage = getElement('[data-hero-image]');
+    const heroTitle = getElement('[data-hero-title]');
+    const practicePill = getElement('[data-practice-pill]');
+    const battleCount = getElement('[data-battle-count]');
+    const averageTime = getElement('[data-average-time]');
+    const skillSelect = getElement('[data-skill-select]');
+    const preferredSkillId = (skillSelect === null || skillSelect === void 0 ? void 0 : skillSelect.value) || currentSave.progress.lastPlayedSkillId;
     if (creatureLabel) {
         creatureLabel.textContent = creatureName ?? 'Your Creature';
+    }
+    if (heroTitle) {
+        heroTitle.textContent = creatureName ? `${creatureName} is ready` : 'Ready for battle';
     }
     if (levelLabel) {
         levelLabel.textContent = `Level ${levelFromXp(currentSave.progress.xp)}`;
@@ -82,10 +119,12 @@ const updateHomeView = () => {
     if (xpLabel) {
         xpLabel.textContent = `${currentSave.progress.xp} XP`;
     }
-    if (practiceLabel) {
-        practiceLabel.textContent = currentSave.flags.practiceMode
-            ? 'Practice Mode: On'
-            : 'Practice Mode: Off';
+    if (battleCount) {
+        battleCount.textContent = `${currentSave.progress.battlesPlayed} played`;
+    }
+    if (practicePill) {
+        practicePill.textContent = currentSave.flags.practiceMode ? 'Practice on' : 'Practice off';
+        practicePill.classList.toggle('pill-muted', !currentSave.flags.practiceMode);
     }
     if (heroImage) {
         heroImage.alt = creatureName ? `${creatureName} ready for battle` : 'Creature ready for battle';
@@ -95,7 +134,13 @@ const updateHomeView = () => {
             value: skill.id,
             label: skill.name,
         })));
-        skillSelect.value = currentSave.progress.lastPlayedSkillId;
+        skillSelect.value = preferredSkillId;
+        updateSkillDetails();
+    }
+    const selectedSkillId = (skillSelect === null || skillSelect === void 0 ? void 0 : skillSelect.value) || preferredSkillId;
+    const selectedSkillState = selectedSkillId ? getSkillState(selectedSkillId) : null;
+    if (averageTime) {
+        averageTime.textContent = formatMs((selectedSkillState === null || selectedSkillState === void 0 ? void 0 : selectedSkillState.averageResponseMs) ?? 0);
     }
 };
 const showHomeHint = () => {
@@ -103,6 +148,12 @@ const showHomeHint = () => {
     if (!hint || !saveData)
         return;
     hint.toggleAttribute('hidden', saveData.flags.seenHomeHint);
+};
+const showMigrationNote = () => {
+    const note = getElement('[data-migration-note]');
+    if (!note || !saveData)
+        return;
+    note.toggleAttribute('hidden', !saveData.flags.migratedFromLegacy);
 };
 const updateSettingsForm = () => {
     if (!saveData || !content)
@@ -130,8 +181,10 @@ const updateBattleView = () => {
     const currentContent = content;
     if (!saveData || !currentContent || !battle)
         return;
-    const playerBar = getElement('[data-player-hp]');
-    const enemyBar = getElement('[data-enemy-hp]');
+    const playerText = getElement('[data-player-hp]');
+    const enemyText = getElement('[data-enemy-hp]');
+    const playerBar = getElement('[data-player-hp-bar]');
+    const enemyBar = getElement('[data-enemy-hp-bar]');
     const questionText = getElement('[data-question]');
     const battleMeta = getElement('[data-battle-meta]');
     const answerInput = getElement('[data-answer-input]');
@@ -139,27 +192,37 @@ const updateBattleView = () => {
     const endActions = getElement('[data-battle-end-actions]');
     const feedback = getElement('[data-feedback]');
     const questionIndex = getElement('[data-question-index]');
+    const questionTotal = getElement('[data-question-total]');
+    if (playerText) {
+        playerText.textContent = formatHP(battle.playerHP, currentContent.battleConfig.playerHP);
+    }
     if (playerBar) {
-        playerBar.textContent = formatHP(battle.playerHP, currentContent.battleConfig.playerHP);
         playerBar.style.setProperty('--value', String(battle.playerHP / currentContent.battleConfig.playerHP));
     }
+    if (enemyText) {
+        enemyText.textContent = formatHP(battle.enemyHP, currentContent.battleConfig.enemyHP);
+    }
     if (enemyBar) {
-        enemyBar.textContent = formatHP(battle.enemyHP, currentContent.battleConfig.enemyHP);
         enemyBar.style.setProperty('--value', String(battle.enemyHP / currentContent.battleConfig.enemyHP));
     }
     if (questionText) {
         questionText.textContent = battle.currentQuestion.prompt;
     }
     if (battleMeta) {
-        const enemyName = currentContent.enemies.find((enemy) => enemy.id === battle.enemyId)?.name;
-        battleMeta.textContent = `${currentContent.skills.find((s) => s.id === battle.skillId)?.name ?? 'Skill'} vs. ${enemyName ?? 'Enemy'}`;
+        const enemy = currentContent.enemies.find((enemy) => enemy.id === battle.enemyId);
+        const skill = currentContent.skills.find((s) => s.id === battle.skillId);
+        const difficulty = (getSkillState(battle.skillId)?.difficulty) ?? 1;
+        battleMeta.textContent = `${(skill === null || skill === void 0 ? void 0 : skill.name) ?? 'Skill'} vs. ${((enemy === null || enemy === void 0 ? void 0 : enemy.name) ?? 'Enemy')} • Difficulty ${difficulty}`;
     }
     if (answerInput) {
         answerInput.value = '';
         answerInput.focus();
     }
     if (questionIndex) {
-        questionIndex.textContent = `#${battle.questionIndex + 1}`;
+        questionIndex.textContent = String(battle.questionIndex + 1);
+    }
+    if (questionTotal) {
+        questionTotal.textContent = String(battle.questionLimit);
     }
     if (submitButton) {
         submitButton.disabled = false;
@@ -176,9 +239,14 @@ const showBattleResult = (result) => {
     const endActions = getElement('[data-battle-end-actions]');
     const submitButton = getElement('[data-answer-submit]');
     if (feedback) {
+        const xpGain = result.battleEnded && result.outcome !== 'in-progress'
+            ? result.outcome === 'player'
+                ? 2
+                : 1
+            : 0;
         const outcomeText = result.outcome === 'player'
-            ? 'You won! XP +1'
-            : 'You lost. Keep practicing!';
+            ? `Victory!${xpGain ? ` XP +${xpGain}` : ''}`
+            : `Battle over.${xpGain ? ` XP +${xpGain}` : ''}`;
         const hitText = result.correct
             ? `Dealt ${result.damageToEnemy} damage${result.fastBonusApplied ? ' (fast bonus!)' : ''}.`
             : `Took ${result.damageToPlayer} damage.`;
@@ -191,6 +259,7 @@ const showBattleResult = (result) => {
         endActions.toggleAttribute('hidden', false);
     }
     updateHomeView();
+    updateSkillDetails();
 };
 const showAnswerFeedback = (result) => {
     const feedback = getElement('[data-feedback]');
@@ -210,7 +279,6 @@ const startBattleFlow = (skillId) => {
         return;
     const { session, save } = startBattle(content, saveData, skillId);
     saveData = updateSave(save, content);
-    persistSave(saveData);
     activeBattle = session;
     updateBattleView();
     setScreen('battle');
@@ -221,7 +289,7 @@ const handleAnswerSubmit = (event) => {
         return;
     const answerInput = getElement('[data-answer-input]');
     const feedback = getElement('[data-feedback]');
-    const raw = answerInput?.value ?? '';
+    const raw = (answerInput === null || answerInput === void 0 ? void 0 : answerInput.value) ?? '';
     const parsed = Number(raw.trim());
     if (!Number.isFinite(parsed)) {
         if (feedback) {
@@ -232,7 +300,6 @@ const handleAnswerSubmit = (event) => {
     const responseTime = Date.now() - activeBattle.questionStartedAt;
     const { session, save, result } = applyAnswerResult(content, saveData, activeBattle, parsed, responseTime);
     saveData = updateSave(save, content);
-    persistSave(saveData);
     activeBattle = session;
     if (result.battleEnded) {
         showBattleResult(result);
@@ -243,43 +310,54 @@ const handleAnswerSubmit = (event) => {
     }
 };
 const attachEventListeners = () => {
+    var _a;
     const setupForm = getElement('#setup-form');
     const setupCreatures = getElement('[data-setup-creatures]');
-    const startBattleButton = getElement('[data-start-battle]');
-    const settingsButton = getElement('[data-open-settings]');
+    const startBattleButtons = Array.from(document.querySelectorAll('[data-start-battle]'));
+    const settingsButtons = Array.from(document.querySelectorAll('[data-open-settings]'));
     const settingsForm = getElement('#settings-form');
     const resetButton = getElement('[data-reset-save]');
     const hintDismiss = getElement('[data-dismiss-hint]');
     const answerForm = getElement('#answer-form');
     const playAgainButton = getElement('[data-play-again]');
     const backHomeButtons = Array.from(document.querySelectorAll('[data-back-home]'));
-    setupForm?.addEventListener('submit', (event) => {
+    const migrationDismiss = getElement('[data-dismiss-migration]');
+    const skillSelect = getElement('[data-skill-select]');
+    setupForm === null || setupForm === void 0 ? void 0 : setupForm.addEventListener('submit', (event) => {
         event.preventDefault();
         if (!content)
             return;
         const emailInput = getElement('[data-setup-email]');
         const gradeSelect = getElement('[data-setup-grade]');
-        const selectedCreature = setupCreatures?.querySelector('input[name="setup-creature"]:checked');
+        const selectedCreature = setupCreatures === null || setupCreatures === void 0 ? void 0 : setupCreatures.querySelector('input[name="setup-creature"]:checked');
         saveData = createInitialSave(content, {
-            parentEmail: emailInput?.value ?? '',
-            grade: Number(gradeSelect?.value ?? content.grades[0]),
-            selectedCreatureId: selectedCreature?.value,
+            parentEmail: (emailInput === null || emailInput === void 0 ? void 0 : emailInput.value) ?? '',
+            grade: Number((gradeSelect === null || gradeSelect === void 0 ? void 0 : gradeSelect.value) ?? content.grades[0]),
+            selectedCreatureId: selectedCreature === null || selectedCreature === void 0 ? void 0 : selectedCreature.value,
         });
         persistSave(saveData);
         updateHomeView();
+        updateSkillDetails();
         showHomeHint();
+        const migrationNote = getElement('[data-migration-note]');
+        migrationNote === null || migrationNote === void 0 ? void 0 : migrationNote.toggleAttribute('hidden', true);
         setScreen('home');
     });
-    startBattleButton?.addEventListener('click', () => {
-        const skillSelect = getElement('[data-skill-select]');
-        const selectedSkill = skillSelect?.value;
+    startBattleButtons.forEach((button) => button.addEventListener('click', () => {
+        var _a;
+        const selectedSkill = (_a = skillSelect === null || skillSelect === void 0 ? void 0 : skillSelect.value) !== null && _a !== void 0 ? _a : undefined;
         startBattleFlow(selectedSkill);
-    });
-    settingsButton?.addEventListener('click', () => {
+    }));
+    settingsButtons.forEach((button) => button.addEventListener('click', () => {
         updateSettingsForm();
         setScreen('settings');
+    }));
+    skillSelect === null || skillSelect === void 0 ? void 0 : skillSelect.addEventListener('change', () => {
+        updateSkillDetails();
+        updateHomeView();
     });
-    settingsForm?.addEventListener('submit', (event) => {
+    settingsForm === null || settingsForm === void 0 ? void 0 : settingsForm.addEventListener('submit', (event) => {
+        var _a;
         event.preventDefault();
         if (!content || !saveData)
             return;
@@ -287,46 +365,41 @@ const attachEventListeners = () => {
         const emailInput = getElement('[data-settings-email]');
         const practiceToggle = getElement('[data-settings-practice]');
         const creatureChoice = settingsForm.querySelector('input[name="settings-creature"]:checked');
-        const updated = {
-            ...saveData,
-            parentEmail: emailInput?.value ?? saveData.parentEmail,
-            child: {
-                grade: Number(gradeSelect?.value ?? saveData.child.grade),
-                selectedCreatureId: creatureChoice?.value ?? saveData.child.selectedCreatureId,
-            },
-            flags: {
-                ...saveData.flags,
-                practiceMode: Boolean(practiceToggle?.checked),
-            },
-        };
+        const updated = Object.assign(Object.assign({}, saveData), { parentEmail: (emailInput === null || emailInput === void 0 ? void 0 : emailInput.value) ?? saveData.parentEmail, child: {
+                grade: Number((gradeSelect === null || gradeSelect === void 0 ? void 0 : gradeSelect.value) ?? saveData.child.grade),
+                selectedCreatureId: (creatureChoice === null || creatureChoice === void 0 ? void 0 : creatureChoice.value) ?? saveData.child.selectedCreatureId,
+            }, flags: Object.assign(Object.assign({}, saveData.flags), { practiceMode: Boolean(practiceToggle === null || practiceToggle === void 0 ? void 0 : practiceToggle.checked) }) });
         saveData = updateSave(updated, content);
-        persistSave(saveData);
         updateHomeView();
+        (_a = getElement('[data-migration-note]')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', true);
         setScreen('home');
     });
-    resetButton?.addEventListener('click', () => {
+    resetButton === null || resetButton === void 0 ? void 0 : resetButton.addEventListener('click', () => {
         resetSave();
         saveData = null;
         activeBattle = null;
         populateSetupOptions();
         setScreen('setup');
     });
-    hintDismiss?.addEventListener('click', () => {
+    hintDismiss === null || hintDismiss === void 0 ? void 0 : hintDismiss.addEventListener('click', () => {
         if (!saveData)
             return;
-        saveData = {
-            ...saveData,
-            flags: {
-                ...saveData.flags,
-                seenHomeHint: true,
-            },
-        };
+        saveData = Object.assign(Object.assign({}, saveData), { flags: Object.assign(Object.assign({}, saveData.flags), { seenHomeHint: true }) });
         persistSave(saveData);
         showHomeHint();
     });
-    answerForm?.addEventListener('submit', handleAnswerSubmit);
-    playAgainButton?.addEventListener('click', () => {
-        startBattleFlow(activeBattle?.skillId ?? saveData?.progress.lastPlayedSkillId);
+    answerForm === null || answerForm === void 0 ? void 0 : answerForm.addEventListener('submit', handleAnswerSubmit);
+    playAgainButton === null || playAgainButton === void 0 ? void 0 : playAgainButton.addEventListener('click', () => {
+        var _a, _b;
+        startBattleFlow((_b = (_a = activeBattle === null || activeBattle === void 0 ? void 0 : activeBattle.skillId) !== null && _a !== void 0 ? _a : saveData === null || saveData === void 0 ? void 0 : saveData.progress.lastPlayedSkillId) !== null && _b !== void 0 ? _b : undefined);
+    });
+    migrationDismiss === null || migrationDismiss === void 0 ? void 0 : migrationDismiss.addEventListener('click', () => {
+        const note = getElement('[data-migration-note]');
+        if (!saveData)
+            return;
+        saveData = Object.assign(Object.assign({}, saveData), { flags: Object.assign(Object.assign({}, saveData.flags), { migratedFromLegacy: false }) });
+        persistSave(saveData);
+        note === null || note === void 0 ? void 0 : note.toggleAttribute('hidden', true);
     });
     backHomeButtons.forEach((button) => button.addEventListener('click', () => {
         activeBattle = null;
@@ -343,7 +416,8 @@ const populateSetupOptions = () => {
         buildSelectOptions(gradeSelect, content.grades.map((grade) => ({ value: grade, label: `Grade ${grade}` })));
     }
     if (creatureContainer) {
-        const starterId = content.creatures.find((creature) => creature.starter)?.id ?? '';
+        const starter = content.creatures.find((creature) => creature.starter);
+        const starterId = (starter === null || starter === void 0 ? void 0 : starter.id) ?? '';
         renderCreatureChoices(creatureContainer, content.creatures, starterId, 'setup-creature');
     }
 };
@@ -354,13 +428,16 @@ const showHomeOrSetup = () => {
     saveData = loaded ?? null;
     if (!saveData) {
         populateSetupOptions();
+        const note = getElement('[data-migration-note]');
+        note === null || note === void 0 ? void 0 : note.toggleAttribute('hidden', true);
         setScreen('setup');
         return;
     }
     saveData = updateSave(saveData, content);
-    persistSave(saveData);
     updateHomeView();
+    updateSkillDetails();
     showHomeHint();
+    showMigrationNote();
     setScreen('home');
 };
 const registerServiceWorker = () => {
