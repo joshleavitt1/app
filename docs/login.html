@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CARI — Login</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --primary: #2563eb;
+        --primary-weak: #e0e7ff;
+        --border: #e2e8f0;
+        --glass: rgba(255, 255, 255, 0.82);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 20% 20%, #e0f2fe 0, transparent 25%),
+          radial-gradient(circle at 80% 0%, #e0e7ff 0, transparent 22%),
+          radial-gradient(circle at 60% 60%, #fdf2f8 0, transparent 30%),
+          var(--bg);
+        color: var(--text);
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 18px 24px;
+        position: sticky;
+        top: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        margin: 0 0 8px 0;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      nav a {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--primary-weak);
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .wrapper {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+      .card {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(12px);
+      }
+      .muted {
+        color: var(--muted);
+        margin: 0 0 12px;
+      }
+      ul {
+        margin: 8px 0 0 16px;
+        color: var(--muted);
+      }
+      .pill {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrapper" style="padding: 0; max-width: 960px">
+        <h1>Log in with email →</h1>
+        <p class="muted" style="margin: 0 0 6px">Magic link. No password.</p>
+        <nav>
+          <a href="index.html">Landing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrapper">
+      <section class="card">
+        <p class="pill">/app/login</p>
+        <h2>Login</h2>
+        <p class="muted">
+          Enter your work email. We’ll send a one-time link to sign you in.
+        </p>
+        <ul>
+          <li>Email input</li>
+          <li>"Log in with email" button</li>
+          <li>Success + error states</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

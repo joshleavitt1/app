@@ -24,15 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-slate-50 text-slate-900">
-        <header className="border-b bg-white">
+      <body className="page-shell text-slate-900">
+        <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
                 Navigation
               </p>
               <p className="text-lg font-bold text-slate-900">
-                Next.js App Router Scaffold
+                CARI App Router Scaffold
               </p>
             </div>
             <nav className="flex flex-wrap gap-3 text-sm font-medium text-blue-700">
@@ -40,7 +40,7 @@ export default function RootLayout({
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 transition hover:border-blue-200 hover:bg-blue-100"
+                  className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-100 hover:shadow-sm"
                 >
                   {link.label}
                 </Link>
